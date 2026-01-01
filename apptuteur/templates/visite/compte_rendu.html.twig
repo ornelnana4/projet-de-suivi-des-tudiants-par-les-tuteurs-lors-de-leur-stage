@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compte-rendu de visite
+{% endblock %}
+
+{% block body %}
+	<div class="bg-light min-vh-100">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+			<div class="container-fluid">
+				<span class="navbar-brand fw-bold">Visites Tuteurs</span>
+
+				<div class="d-flex align-items-center">
+					<span class="text-white small me-3">
+						{{ tuteur.prenom }}
+						{{ tuteur.nom }}
+					</span>
+					<a href="{{ path('app_etudiant_visites', {'id': etudiant.id}) }}" class="btn btn-outline-light btn-sm me-2">
+						Visites de l'étudiant
+					</a>
+					<a href="{{ path('app_etudiant_index') }}" class="btn btn-outline-light btn-sm me-2">
+						Mes étudiants
+					</a>
+					<a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm">
+						Déconnexion
+					</a>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container py-4">
+			{% for label, messages in app.flashes %}
+				{% for message in messages %}
+					<div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} alert-dismissible fade show small" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+					</div>
+				{% endfor %}
+			{% endfor %}
+
+			<div class="row justify-content-center">
+				<div class="col-md-7">
+					<div class="card border-0 shadow-sm mb-3">
+						<div class="card-body">
+							<h1 class="h5 mb-3">Compte-rendu de visite</h1>
+
+							<dl class="row small mb-0">
+								<dt class="col-sm-3 text-muted">Étudiant</dt>
+								<dd class="col-sm-9">
+									{{ etudiant.prenom }}
+									{{ etudiant.nom }}
+									–
+									{{ etudiant.formation }}
+								</dd>
+
+								<dt class="col-sm-3 text-muted">Date</dt>
+								<dd class="col-sm-9">
+									{{ visite.date ? visite.date|date('d/m/Y') : 'Non renseignée' }}
+								</dd>
+
+								<dt class="col-sm-3 text-muted">Commentaire initial</dt>
+								<dd class="col-sm-9">
+									{{ visite.commentaire ?: '—' }}
+								</dd>
+
+								<dt class="col-sm-3 text-muted">Statut actuel</dt>
+								<dd class="col-sm-9">
+									<span class="badge bg-secondary text-capitalize">
+										{{ visite.statut }}
+									</span>
+								</dd>
+							</dl>
+						</div>
+					</div>
+
+					<div class="card border-0 shadow-sm">
+						<div class="card-body">
+							<form method="post">
+								<div class="mb-3">
+									<label for="compteRendu" class="form-label small fw-semibold">Compte-rendu</label>
+									<textarea id="compteRendu" name="compteRendu" rows="8" class="form-control form-control-sm">{{ visite.compteRendu }}</textarea>
+								</div>
+
+								<div class="d-flex justify-content-between">
+									<a href="{{ path('app_etudiant_visites', {'id': etudiant.id}) }}" class="btn btn-outline-secondary btn-sm">
+										Retour aux visites
+									</a>
+									<div>
+										<a href="{{ path('app_visite_compte_rendu_pdf', {'id': visite.id}) }}" class="btn btn-outline-primary btn-sm me-2 text-nowrap">
+											Exporter en PDF
+										</a>
+										<button type="submit" class="btn btn-success btn-sm text-nowrap">
+											Enregistrer le compte-rendu
+										</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<p class="text-center text-muted mt-3 small">
+						Compte-rendu de visite – Mini-projet Visites Tuteurs
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

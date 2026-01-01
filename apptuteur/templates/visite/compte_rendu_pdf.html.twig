@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Compte-rendu de visite</title>
+		<style>
+			body {
+				font-family: DejaVu Sans, sans-serif;
+				font-size: 12px;
+			}
+			h1 {
+				font-size: 18px;
+				margin-bottom: 10px;
+			}
+			.small {
+				font-size: 11px;
+				color: #555;
+			}
+			.section {
+				margin-bottom: 15px;
+			}
+			.label {
+				font-weight: bold;
+				width: 120px;
+				display: inline-block;
+			}
+			.box {
+				border: 1px solid #ccc;
+				padding: 8px;
+				min-height: 60px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Compte-rendu de visite</h1>
+
+		<div class="section">
+			<div>
+				<span class="label">Étudiant :</span>
+				{{ etudiant.prenom }}
+				{{ etudiant.nom }}
+				–
+				{{ etudiant.formation }}</div>
+			<div>
+				<span class="label">Date :</span>
+				{{ visite.date ? visite.date|date('d/m/Y') : 'Non renseignée' }}</div>
+			<div>
+				<span class="label">Statut :</span>
+				{{ visite.statut }}</div>
+		</div>
+
+		<div class="section">
+			<div class="label">Commentaire initial :</div>
+			<div class="box">{{ visite.commentaire ?: '—' }}</div>
+		</div>
+
+		<div class="section">
+			<div class="label">Compte-rendu :</div>
+			<div class="box">{{ visite.compteRendu ?: '—' }}</div>
+		</div>
+
+		<p class="small">
+			Généré automatiquement le
+			{{ "now"|date('d/m/Y H:i') }}.
+		</p>
+	</body>
+</html>
+

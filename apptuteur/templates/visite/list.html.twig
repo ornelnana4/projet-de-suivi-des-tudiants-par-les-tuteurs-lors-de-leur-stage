@@ -77,6 +77,10 @@
 												<a href="{{ path('visites_delete', {'id': visite.id}) }}" class="btn btn-outline-danger btn-sm text-nowrap" onclick="return confirm('Supprimer cette visite ?');">
 													Supprimer
 												</a>
+												<a href="{{ path('app_visite_compte_rendu', {'id': visite.id}) }}" class="btn btn-outline-secondary btn-sm me-2 text-nowrap">
+													Compte-rendu
+												</a>
+
 											</div>
 										</td>
 									</tr>

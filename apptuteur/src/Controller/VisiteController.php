@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Visite;
 use App\Entity\Etudiant;
 use App\Entity\Tuteur;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -133,5 +135,65 @@ class VisiteController extends AbstractController
         }
 
         return $this->redirectToRoute('dashboard');
+    }
+    #[Route('/visites/{id}/compte-rendu', name: 'app_visite_compte_rendu', methods: ['GET', 'POST'])]
+    public function compteRendu(
+        Visite $visite,
+        Request $request,
+        EntityManagerInterface $em,
+        SessionInterface $session
+    ): Response {
+        $tuteurId = $session->get('tuteur_id');
+        if (!$tuteurId) {
+            return $this->redirectToRoute('login');
+        }
+
+        // On ne change que le champ compteRendu
+        if ($request->isMethod('POST')) {
+            $visite->setCompteRendu($request->request->get('compteRendu'));
+            $em->flush();
+
+            $this->addFlash('success', 'Compte-rendu mis à jour.');
+            return $this->redirectToRoute('app_visite_compte_rendu', ['id' => $visite->getId()]);
+        }
+
+        $etudiant = $visite->getEtudiant();
+        $tuteur   = $em->getRepository(Tuteur::class)->find($tuteurId);
+
+        return $this->render('visite/compte_rendu.html.twig', [
+            'visite'   => $visite,
+            'etudiant' => $etudiant,
+            'tuteur'   => $tuteur,
+        ]);
+    }
+
+    #[Route('/visites/{id}/compte-rendu/pdf', name: 'app_visite_compte_rendu_pdf', methods: ['GET'])]
+    public function compteRenduPdf(Visite $visite): Response
+    {
+        $etudiant = $visite->getEtudiant();
+
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'DejaVu Sans');
+
+        $dompdf = new Dompdf($pdfOptions);
+
+        // HTML du PDF à partir d’un template Twig dédié
+        $html = $this->renderView('visite/compte_rendu_pdf.html.twig', [
+            'visite'   => $visite,
+            'etudiant' => $etudiant,
+        ]);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return new Response(
+            $dompdf->output(),
+            200,
+            [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="compte-rendu-visite-' . $visite->getId() . '.pdf"',
+            ]
+        );
     }
 }
