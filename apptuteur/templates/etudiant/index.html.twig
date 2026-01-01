@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes étudiants
+{% endblock %}
+
+{% block body %}
+	<div
+		class="bg-light min-vh-100">
+		{# HEADER BLEU #}
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+			<div class="container-fluid">
+				<span class="navbar-brand fw-bold">Visites Tuteurs</span>
+
+				<div class="d-flex align-items-center">
+					<span class="text-white small me-3">
+						{{ tuteur.prenom }}
+						{{ tuteur.nom }}
+					</span>
+					<a href="{{ path('app_dashboard') }}" class="btn btn-outline-light btn-sm me-2">
+						Dashboard
+					</a>
+					<a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm">
+						Déconnexion
+					</a>
+				</div>
+			</div>
+		</nav>
+
+		{# BODY #}
+		<div
+			class="container py-4">
+			{# Messages flash #}
+			{% for label, messages in app.flashes %}
+				{% for message in messages %}
+					<div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} alert-dismissible fade show small" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+					</div>
+				{% endfor %}
+			{% endfor %}
+
+			{# Titre + bouton ajout #}
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<div>
+					<h1 class="h4 mb-1">Mes étudiants</h1>
+					<p class="text-muted small mb-0">
+						Gérez les étudiants que vous suivez en visite de stage.
+					</p>
+				</div>
+				<a href="{{ path('app_etudiant_new') }}" class="btn btn-primary btn-sm text-nowrap">
+					+ Ajouter un étudiant
+				</a>
+			</div>
+
+			{% if etudiants is not empty %}
+				<div class="card border-0 shadow-sm">
+					<div class="card-body p-0">
+						<table class="table table-hover align-middle mb-0">
+							<thead class="table-light">
+								<tr>
+									<th>Nom</th>
+									<th>Prénom</th>
+									<th>Formation</th>
+									<th class="text-end" style="width: 260px;">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for etu in etudiants %}
+									<tr>
+										<td>{{ etu.nom }}</td>
+										<td>{{ etu.prenom }}</td>
+                                            <td class="text-muted">{{ etu.formation }}</td>
+    <td class="text-end">
+        <div class="d-inline-flex align-items-center text-nowrap">
+            <a href="{{ path('app_etudiant_visites', {'id': etu.id}) }}" class="btn btn-outline-secondary btn-sm me-2 text-nowrap">
+                Voir visites
+            </a>
+            <a href="{{ path('app_visite_new', {'id': etu.id}) }}" class="btn btn-outline-primary btn-sm me-2 text-nowrap">
+                Ajouter visite
+            </a>
+            <a href="{{ path('app_etudiant_edit', {'id': etu.id}) }}" class="btn btn-success btn-sm text-nowrap">
+                Modifier
+            </a>
+        </div>
+    </td>
+
+
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			{% else %}
+				<div class="card border-0 shadow-sm">
+					<div class="card-body text-center py-5">
+						<p class="text-muted mb-2">Aucun étudiant pour le moment.</p>
+						<p class="text-muted small mb-3">
+							Cliquez sur le bouton ci‑dessus pour ajouter votre premier étudiant.
+						</p>
+						<a href="{{ path('app_etudiant_new') }}" class="btn btn-primary btn-sm text-nowrap">
+							Ajouter un étudiant
+						</a>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+

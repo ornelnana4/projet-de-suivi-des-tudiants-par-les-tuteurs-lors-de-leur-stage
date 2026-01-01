@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel étudiant
+{% endblock %}
+
+{% block body %}
+	<div class="bg-light min-vh-100">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+			<div class="container-fluid">
+				<span class="navbar-brand fw-bold">Visites Tuteurs</span>
+				<div class="d-flex align-items-center">
+					<span class="text-white me-3">
+						{{ tuteur.prenom }}
+						{{ tuteur.nom }}
+					</span>
+					<a href="{{ path('app_etudiant_index') }}" class="btn btn-outline-light btn-sm me-2">
+						Mes étudiants
+					</a>
+					<a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm">
+						Déconnexion
+					</a>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container py-4">
+			{% for label, messages in app.flashes %}
+				{% for message in messages %}
+					<div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+					</div>
+				{% endfor %}
+			{% endfor %}
+
+			<div class="row justify-content-center">
+				<div class="col-md-6">
+					<div class="card shadow-sm border-0">
+						<div class="card-body">
+							<h1 class="h5 mb-3">Ajouter un étudiant</h1>
+
+							<form method="post" action="{{ path('app_etudiant_new') }}">
+								<div class="mb-3">
+									<label for="nom" class="form-label">Nom</label>
+									<input type="text" id="nom" name="nom" required class="form-control">
+								</div>
+
+								<div class="mb-3">
+									<label for="prenom" class="form-label">Prénom</label>
+									<input type="text" id="prenom" name="prenom" required class="form-control">
+								</div>
+
+								<div class="mb-3">
+									<label for="formation" class="form-label">Formation</label>
+									<input type="text" id="formation" name="formation" required class="form-control">
+								</div>
+
+								<button type="submit" class="btn btn-success w-100">
+									Enregistrer l’étudiant
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

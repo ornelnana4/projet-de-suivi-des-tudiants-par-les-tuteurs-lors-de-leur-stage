@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Visites de
+	{{ etudiant.prenom }}
+	{{ etudiant.nom }}
+{% endblock %}
+
+{% block body %}
+	<div class="bg-light min-vh-100">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+			<div class="container-fluid">
+				<span class="navbar-brand fw-bold">Visites Tuteurs</span>
+
+				<div class="d-flex align-items-center">
+					<span class="text-white small me-3">
+						{{ tuteur.prenom }}
+						{{ tuteur.nom }}
+					</span>
+					<a href="{{ path('app_etudiant_index') }}" class="btn btn-outline-light btn-sm me-2">
+						Mes étudiants
+					</a>
+					<a href="{{ path('app_dashboard') }}" class="btn btn-outline-light btn-sm me-2">
+						Dashboard
+					</a>
+					<a href="{{ path('app_logout') }}" class="btn btn-outline-light btn-sm">
+						Déconnexion
+					</a>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container py-4">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<div>
+					<h1 class="h4 mb-1">Visites de
+						{{ etudiant.prenom }}
+						{{ etudiant.nom }}</h1>
+					<p class="text-muted small mb-0">
+						Suivi des visites pour la formation
+						{{ etudiant.formation }}.
+					</p>
+				</div>
+				<a href="{{ path('app_visite_new', {'id': etudiant.id}) }}" class="btn btn-primary btn-sm text-nowrap">
+					+ Ajouter une visite
+				</a>
+			</div>
+
+			{% if visites is not empty %}
+				<div class="card border-0 shadow-sm">
+					<div class="card-body p-0">
+						<table class="table table-hover align-middle mb-0">
+							<thead class="table-light">
+								<tr>
+									<th>Date</th>
+									<th>Statut</th>
+									<th>Commentaire</th>
+									<th class="text-end" style="width: 260px;">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for visite in visites %}
+									<tr>
+										<td>{{ visite.date ? visite.date|date('d/m/Y') : '' }}</td>
+										<td>
+											<span class="badge bg-secondary text-capitalize">
+												{{ visite.statut }}
+											</span>
+										</td>
+										<td class="text-muted small">
+											{{ visite.commentaire ?: '—' }}
+										</td>
+										<td class="text-end">
+											<div class="d-inline-flex align-items-center text-nowrap">
+												<a href="{{ path('app_visite_edit', {'id': visite.id}) }}" class="btn btn-success btn-sm me-2 text-nowrap">
+													Modifier
+												</a>
+												<a href="{{ path('visites_delete', {'id': visite.id}) }}" class="btn btn-outline-danger btn-sm text-nowrap" onclick="return confirm('Supprimer cette visite ?');">
+													Supprimer
+												</a>
+											</div>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			{% else %}
+				<div class="card border-0 shadow-sm">
+					<div class="card-body text-center py-5">
+						<p class="text-muted mb-2">Aucune visite enregistrée pour cet étudiant.</p>
+						<a href="{{ path('app_visite_new', {'id': etudiant.id}) }}" class="btn btn-primary btn-sm text-nowrap">
+							Ajouter une première visite
+						</a>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
