@@ -7,6 +7,7 @@ use App\Entity\Etudiant;
 use App\Entity\Tuteur;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use App\Repository\VisiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +19,13 @@ class VisiteController extends AbstractController
 {
     // 6.1 Liste des visites d’un étudiant
     #[Route('/etudiants/{id}/visites', name: 'app_etudiant_visites')]
-    public function list(Etudiant $etudiant, EntityManagerInterface $em, SessionInterface $session): Response
-    {
+    public function list(
+        Etudiant $etudiant,
+        Request $request,
+        VisiteRepository $visiteRepository,
+        EntityManagerInterface $em,
+        SessionInterface $session
+    ): Response {
         $tuteurId = $session->get('tuteur_id');
         if (!$tuteurId) {
             return $this->redirectToRoute('login');
@@ -27,15 +33,19 @@ class VisiteController extends AbstractController
 
         $tuteur = $em->getRepository(Tuteur::class)->find($tuteurId);
 
-        $visites = $em->getRepository(Visite::class)->findBy(
-            ['etudiant' => $etudiant],
-            ['date' => 'DESC']
-        );
+        // Récupération des filtres GET
+        $statut = $request->query->get('statut');        // null, 'prévue', 'réalisée', 'annulée'
+        $ordre  = $request->query->get('ordre', 'desc'); // 'asc' ou 'desc'
+
+        // Utilisation du repository personnalisé
+        $visites = $visiteRepository->findByEtudiantWithFilters($etudiant, $statut, $ordre);
 
         return $this->render('visite/list.html.twig', [
             'etudiant' => $etudiant,
             'visites'  => $visites,
             'tuteur'   => $tuteur,
+            'statut'   => $statut,
+            'ordre'    => $ordre,
         ]);
     }
 
@@ -196,4 +206,6 @@ class VisiteController extends AbstractController
             ]
         );
     }
+
+    
 }

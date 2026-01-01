@@ -30,28 +30,50 @@
 		</nav>
 
 		<div class="container py-4">
-			<div class="d-flex justify-content-between align-items-center mb-3">
-				<div>
-					<h1 class="h4 mb-1">Visites de
-						{{ etudiant.prenom }}
-						{{ etudiant.nom }}</h1>
-					<p class="text-muted small mb-0">
-						Suivi des visites pour la formation
-						{{ etudiant.formation }}.
-					</p>
-				</div>
-				<a href="{{ path('app_visite_new', {'id': etudiant.id}) }}" class="btn btn-primary btn-sm text-nowrap">
-					+ Ajouter une visite
-				</a>
-			</div>
+			
 
 			{% if visites is not empty %}
 				<div class="card border-0 shadow-sm">
 					<div class="card-body p-0">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<div>
+								<h1 class="h4 mb-1">Visites de
+									{{ etudiant.prenom }}
+									{{ etudiant.nom }}</h1>
+								<p class="text-muted small mb-0">
+									Suivi des visites pour la formation
+									{{ etudiant.formation }}.
+								</p>
+							</div>
+
+							<form method="get" class="d-flex align-items-center gap-2">
+								<label for="statut" class="small me-1">Statut :</label>
+								<select id="statut" name="statut" class="form-select form-select-sm me-2">
+									<option value="" {{ statut is null or statut == '' ? 'selected' : '' }}>Toutes</option>
+									<option value="prévue" {{ statut == 'prévue' ? 'selected' : '' }}>Prévue</option>
+									<option value="réalisée" {{ statut == 'réalisée' ? 'selected' : '' }}>Réalisée</option>
+									<option value="annulée" {{ statut == 'annulée' ? 'selected' : '' }}>Annulée</option>
+								</select>
+
+								<input type="hidden" name="ordre" value="{{ ordre|default('desc') }}">
+
+								<button type="submit" class="btn btn-outline-light btn-sm">
+									Filtrer
+								</button>
+							</form>
+						</div>
+
+
 						<table class="table table-hover align-middle mb-0">
 							<thead class="table-light">
 								<tr>
-									<th>Date</th>
+																		<th>Date
+									<a href="{{ path('app_etudiant_visites', { id: etudiant.id, statut: statut, ordre: 'asc' }) }}" class="small text-decoration-none ms-1">
+										Trier ↑
+									</a>
+									<a href="{{ path('app_etudiant_visites', { id: etudiant.id, statut: statut, ordre: 'desc' }) }}" class="small text-decoration-none ms-1">
+										Trier ↓
+									</a></th>
 									<th>Statut</th>
 									<th>Commentaire</th>
 									<th class="text-end" style="width: 260px;">Actions</th>

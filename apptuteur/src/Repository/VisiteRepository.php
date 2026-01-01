@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Visite;
+use App\Entity\Etudiant;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,27 @@ class VisiteRepository extends ServiceEntityRepository
         parent::__construct($registry, Visite::class);
     }
 
-    //    /**
-    //     * @return Visite[] Returns an array of Visite objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('v')
-    //            ->andWhere('v.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('v.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return Visite[]
+     */
+    public function findByEtudiantWithFilters(
+        Etudiant $etudiant,
+        ?string $statut,
+        string $ordre = 'desc'
+    ): array {
+        $qb = $this->createQueryBuilder('v')
+            ->andWhere('v.etudiant = :etu')
+            ->setParameter('etu', $etudiant);
 
-    //    public function findOneBySomeField($value): ?Visite
-    //    {
-    //        return $this->createQueryBuilder('v')
-    //            ->andWhere('v.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($statut && in_array($statut, ['prévue', 'réalisée', 'annulée'], true)) {
+            $qb->andWhere('v.statut = :statut')
+                ->setParameter('statut', $statut);
+        }
+
+        $ordre = strtolower($ordre) === 'asc' ? 'ASC' : 'DESC';
+
+        $qb->orderBy('v.date', $ordre);
+
+        return $qb->getQuery()->getResult();
+    }
 }
